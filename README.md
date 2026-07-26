@@ -3,7 +3,7 @@
 
 Standalone Java tool to automatically extract, convert, and patch exteraGram core libraries from prebuilt APKs for plugin development.
 
-[![Channel](https://img.shields.io/badge/Channel-Telegram-blue.svg)](https://t.me/shikaatuProjectsLog)
+[![Channel](https://img.shields.io/badge/Channel-Telegram-blue.svg)](https://t.me/fossSquad)
 
 ### Features
 - **Automated extraction** — instantly unpacks core classes from any exteraGram APK
@@ -29,5 +29,5 @@ java -jar exteralib.jar <input_exteragram.apk> -o <output_exteragram.jar>
 You can then place `<output_exteragram.jar>` directly into your `re-extera/libs/` folder to compile your plugin against it.
 
 ### Credits
-- [@shikaatux](https://github.com/logopek) — development and automation
+- [@aartzz](https://github.com/aartzz) — development and automation
 - [dex2jar](https://github.com/pxb1988/dex2jar) — `.dex` to `.class` conversion tool
