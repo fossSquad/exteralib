@@ -4,6 +4,7 @@ build/
 
 # Binaries
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.apk
 *.dex
 *.class
