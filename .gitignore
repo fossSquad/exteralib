@@ -1,0 +1,13 @@
+# Build artifacts
+build/
+.gradle/
+
+# Binaries
+*.jar
+*.apk
+*.dex
+*.class
+*.hprof
+
+# Leftover downloaded tools
+jadx/
