@@ -1,7 +1,7 @@
 ## exteralib
 *[Licensed under the GNU General Public License v3.0](LICENSE)*
 
-Standalone Java tool to automatically extract, convert, and patch exteraGram core libraries from prebuilt APKs for plugin development.
+Standalone Java tool to automatically extract, convert, and patch exteraGram core libraries from prebuilt APKs for .dex plugin development.
 
 [![Channel](https://img.shields.io/badge/Channel-Telegram-blue.svg)](https://t.me/fossSquad)
 
@@ -25,8 +25,6 @@ Run the tool against any exteraGram APK (like beta or stable releases) to get a 
 ```bash
 java -jar exteralib.jar <input_exteragram.apk> -o <output_exteragram.jar>
 ```
-
-You can then place `<output_exteragram.jar>` directly into your `re-extera/libs/` folder to compile your plugin against it.
 
 ### Credits
 - [@aartzz](https://github.com/aartzz) — development and automation
