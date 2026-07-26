@@ -1,14 +1,33 @@
-# exteralib
+## exteralib
+*[Licensed under the GNU General Public License v3.0](LICENSE)*
 
-This is a reverse-engineered, open-sourced library extracted from the Exteragram Android client. 
-Exteragram is a powerful Telegram client with many features, but unfortunately it is closed-source, violating the GPL-2.0 license of the official Telegram client.
+Standalone Java tool to automatically extract, convert, and patch exteraGram core libraries from prebuilt APKs for plugin development.
 
-This repository provides the extracted `exteragram.jar` library so that developers can build upon it, study its features, or use it in other projects (like Xposed modules).
+[![Channel](https://img.shields.io/badge/Channel-Telegram-blue.svg)](https://t.me/shikaatuProjectsLog)
 
-## How it was made
-1. Took the prebuilt APK of the Exteragram client.
-2. Ran it through `dex2jar` to get the classes.
-3. Patched the classes because they were initially compiled in Java 6, which caused issues with newer gradle builds.
+### Features
+- **Automated extraction** — instantly unpacks core classes from any exteraGram APK
+- **Dex to Jar** — natively embeds dex2jar to convert `.dex` back into compiled `.jar` format
+- **Bytecode patching** — dynamically changes major versions in `.class` files (e.g. to Java 17 bytecode) to allow compiling modern plugins
+- **Lightweight** — single executable `.jar` file that takes seconds to run
 
-## Disclaimer
-This project is for educational and interoperability purposes. 
+### Building
+```bash
+git clone https://github.com/fossSquad/exteralib.git
+cd exteralib
+./gradlew shadowJar
+cp build/libs/exteralib-1.0-SNAPSHOT-all.jar exteralib.jar
+```
+
+### Usage
+Run the tool against any exteraGram APK (like beta or stable releases) to get a clean, Java-17 compatible library for your plugin:
+
+```bash
+java -jar exteralib.jar <input_exteragram.apk> -o <output_exteragram.jar>
+```
+
+You can then place `<output_exteragram.jar>` directly into your `re-extera/libs/` folder to compile your plugin against it.
+
+### Credits
+- [@shikaatux](https://github.com/logopek) — development and automation
+- [dex2jar](https://github.com/pxb1988/dex2jar) — `.dex` to `.class` conversion tool
