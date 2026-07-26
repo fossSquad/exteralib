@@ -27,5 +27,4 @@ java -jar exteralib.jar <input_exteragram.apk> -o <output_exteragram.jar>
 ```
 
 ### Credits
-- [@aartzz](https://github.com/aartzz) — development and automation
 - [dex2jar](https://github.com/pxb1988/dex2jar) — `.dex` to `.class` conversion tool
