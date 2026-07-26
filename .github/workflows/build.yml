@@ -1,0 +1,55 @@
+name: Build exteralib
+
+on:
+  push:
+    branches: [ "master", "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew shadowJar
+
+    - name: Copy JAR to root
+      run: cp build/libs/exteralib-1.0-SNAPSHOT-all.jar exteralib.jar
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: exteralib
+        path: exteralib.jar
+
+    - name: Parse tag for release name
+      id: parse_tag
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        echo "version=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+    - name: Upload to Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Release ${{ steps.parse_tag.outputs.version }}
+        files: exteralib.jar
+        generate_release_notes: true
