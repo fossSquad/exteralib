@@ -23,6 +23,13 @@ public class Main {
         String inputApk = args[0];
         String outputJar = args[2];
         
+        File out = new File(outputJar);
+        if (out.isDirectory()) {
+            String apkName = new File(inputApk).getName();
+            String jarName = apkName.endsWith(".apk") ? apkName.substring(0, apkName.length() - 4) + ".jar" : apkName + ".jar";
+            outputJar = new File(out, jarName).getPath();
+        }
+        
         try {
             Path tempJar = Files.createTempFile("dex2jar-temp", ".jar");
             System.out.println("Running dex2jar on " + inputApk + "...");
