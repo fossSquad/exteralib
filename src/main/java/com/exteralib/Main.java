@@ -10,18 +10,22 @@ import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.util.Arrays;
 import java.lang.reflect.Method;
 
 public class Main {
     public static void main(String[] args) {
         if (args.length < 3 || !args[1].equals("-o")) {
-            System.out.println("Usage: java -jar exteralib.jar <input.apk> -o <output.jar>");
+            System.out.println("Usage: java -jar exteralib.jar <input.apk> -o <output.jar> [--all]");
             System.exit(1);
         }
 
         String inputApk = args[0];
         String outputJar = args[2];
+        boolean keepAllClasses = args.length == 4 && args[3].equals("--all");
+        if (args.length > 4 || (args.length == 4 && !keepAllClasses)) {
+            System.out.println("Unknown option. Use --all to retain every converted class.");
+            System.exit(1);
+        }
         
         File out = new File(outputJar);
         if (out.isDirectory()) {
@@ -43,7 +47,7 @@ public class Main {
             
             System.out.println("Dex2jar finished. Patching Java version to 17...");
             
-            patchJar(tempJar.toFile(), new File(outputJar));
+            patchJar(tempJar.toFile(), new File(outputJar), keepAllClasses);
             
             Files.deleteIfExists(tempJar);
             System.out.println("Success! Patched jar saved to: " + outputJar);
@@ -54,12 +58,17 @@ public class Main {
         }
     }
 
-    private static void patchJar(File inputJar, File outputJar) throws Exception {
+    private static void patchJar(File inputJar, File outputJar, boolean keepAllClasses) throws Exception {
+        int keptClasses = 0;
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(inputJar.toPath()));
              ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(outputJar.toPath()))) {
-             
+
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
+                if (!shouldKeep(entry.getName(), keepAllClasses)) {
+                    zis.closeEntry();
+                    continue;
+                }
                 zos.putNextEntry(new ZipEntry(entry.getName()));
                 
                 if (entry.getName().endsWith(".class")) {
@@ -76,6 +85,7 @@ public class Main {
                         classData[7] = 61;
                     }
                     zos.write(classData);
+                    keptClasses++;
                 } else {
                     byte[] buffer = new byte[8192];
                     int len;
@@ -87,6 +97,17 @@ public class Main {
                 zis.closeEntry();
             }
         }
+        if (keptClasses == 0) {
+            throw new IllegalStateException("No com.exteragram classes found. Use --all only for legacy output.");
+        }
+        System.out.println("Kept " + keptClasses + (keepAllClasses ? " classes." : " com.exteragram classes."));
+    }
+
+    private static boolean shouldKeep(String entryName, boolean keepAllClasses) {
+        if (keepAllClasses) {
+            return true;
+        }
+        return entryName.startsWith("com/exteragram/") || entryName.startsWith("META-INF/");
     }
 
     private static byte[] readAllBytes(InputStream is) throws Exception {
